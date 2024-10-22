@@ -1,0 +1,62 @@
+<html>
+<head>
+    <link rel="stylesheet" href="default.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Object Demonstrations</h1>
+
+        <!-- Create Object -->
+        <h2>Create Object</h2>
+        <input type="text" id="personName" placeholder="Enter name">
+        <input type="number" id="personAge" placeholder="Enter age">
+        <button onclick="createPerson()">Create Person</button>
+        <p id="personDisplay"></p>
+
+        <!-- Display All Persons -->
+        <h2>Display All Persons</h2>
+        <button onclick="displayPersons()">Display Persons</button>
+        <p id="allPersonsDisplay"></p>
+
+        <!-- Clear All Outputs -->
+        <button onclick="clearObjects()">Clear All</button>
+    </div>
+
+    <script>
+        const persons = [];
+
+        // Create person object
+        function createPerson() {
+            const name = document.getElementById('personName').value;
+            const age = parseInt(document.getElementById('personAge').value);
+            const person = { name, age };
+            persons.push(person);
+            document.getElementById('personDisplay').innerText = `Created: ${JSON.stringify(person)}`;
+            clearInputs('personName', 'personAge');
+        }
+
+        // Display all persons
+        function displayPersons() {
+            if (persons.length > 0) {
+                const display = persons.map(p => `${p.name} (Age: ${p.age})`).join(', ');
+                document.getElementById('allPersonsDisplay').innerText = `Persons: ${display}`;
+            } else {
+                document.getElementById('allPersonsDisplay').innerText = `No persons created!`;
+            }
+        }
+
+        // Clear outputs
+        function clearObjects() {
+            persons.length = 0; // Clear persons array
+            document.getElementById('personDisplay').innerText = '';
+            document.getElementById('allPersonsDisplay').innerText = '';
+            clearInputs('personName', 'personAge');
+        }
+
+        // Clear input fields
+        function clearInputs(...ids) {
+            ids.forEach(id => document.getElementById(id).value = '');
+        }
+    </script>
+</body>
+</html>

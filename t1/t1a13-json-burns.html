@@ -1,0 +1,77 @@
+<html>
+<head>
+    <link rel="stylesheet" href="default.css">
+</head>
+<body>
+    <div class="container">
+        <h1>JSON Editor with Format Converter</h1>
+
+        <!-- Input JSON Data -->
+        <h2>Input JSON Data</h2>
+        <textarea id="jsonInput" placeholder='{"name": "John", "age": 30}'></textarea>
+        <button onclick="validateJSON()">Validate JSON</button>
+        <p id="jsonMessage"></p>
+
+        <!-- Convert to other formats -->
+        <button onclick="convertToXML()">Convert to XML</button>
+        <button onclick="convertToYAML()">Convert to YAML</button>
+        
+        <h2>Converted Output</h2>
+        <pre id="convertedOutput" style="text-align: left;"></pre>
+
+        <script type='text/javascript' src="xml2json.js"></script>
+    </div>
+
+    <script>
+        // Validate JSON and display message
+        function validateJSON() {
+            const jsonData = document.getElementById('jsonInput').value;
+            try {
+                JSON.parse(jsonData);
+                document.getElementById('jsonMessage').innerText = 'Valid JSON!';
+            } catch (error) {
+                document.getElementById('jsonMessage').innerText = 'Invalid JSON!';
+            }
+        }
+        let yaml = null; 
+
+        import('https://cdn.jsdelivr.net/npm/yaml@2.5.0/browser/index.min.js')
+            .then(module => {
+                yaml = module;
+            });
+        // import('https://raw.githubusercontent.com/abdolence/x2js/refs/heads/master/xml2json.js')
+        //     .then(module => {
+        //         // yaml = module; 
+        //     });
+        var x2js = new X2JS();
+        function convertToXML() {
+            const jsonData = document.getElementById('jsonInput').value;
+            // try {
+                const jsonObject = JSON.parse(jsonData);
+                const xml = jsonToXML(jsonObject);
+                document.getElementById('convertedOutput').innerText = xml;
+            // } catch (error) {
+            //     document.getElementById('convertedOutput').innerText = 'Invalid JSON!';
+            // }
+        }
+        function convertToYAML() {
+            const jsonData = document.getElementById('jsonInput').value;
+            // try {
+                const jsonObject = JSON.parse(jsonData);
+                const yamll = jsonToYAML(jsonObject);
+                document.getElementById('convertedOutput').innerText = yamll;
+            // } catch (error) {
+            //     document.getElementById('convertedOutput').innerText = 'Invalid JSON!';
+            // }
+        }
+
+        function jsonToXML(json) {
+            return x2js.json2xml_str(json)
+        }
+
+        function jsonToYAML(json) {
+            return yaml.stringify(json);
+        }
+    </script>
+</body>
+</html>

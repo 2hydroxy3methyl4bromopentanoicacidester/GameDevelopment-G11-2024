@@ -1,47 +1,60 @@
-<!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    
+    <link rel="stylesheet" href="default.css">
 </head>
 <body>
-    <h1>decision things but using loops and a dictionary</h1>
-    <div id="quizContainer"></div>
-    <button onclick="checkAnswers()">Submit All Answers</button>
-    <p id="results"></p>
+    <div class="container">
+        <h1>Loop Demonstrations</h1>
+
+        <!-- Display Multiplication Table -->
+        <h2>Multiplication Table (For Loop)</h2>
+        <input type="number" id="tableNumber" placeholder="Enter a number">
+        <button onclick="generateTable()">Generate Table</button>
+        <ul id="tableOutput"></ul>
+
+        <!-- Repeat Text N Times (While Loop) -->
+        <h2>Repeat Text N Times (While Loop)</h2>
+        <input type="text" id="repeatText" placeholder="Text to repeat" value="GET OUT OF MY HEAD">
+        <input type="number" id="repeatCount" placeholder="Number of repetitions" value="10000">
+        <button onclick="repeatText()">Repeat</button>
+        <p id="repeatOutput"></p>
+
+        <!-- Clear Outputs -->
+        <button onclick="clearLoops()">Clear All</button>
+    </div>
 
     <script>
-        const questions = [
-            { question: "What is the capital of France?", answer: "paris" },
-            { question: "What is 2 + 2?", answer: "4" },
-            { question: "What color is the sky on a clear day?", answer: "blue" },
-            { question: "How many legs does a spider have?", answer: "8" }
-        ];
-
-        function createQuiz() {
-            const quizContainer = document.getElementById('quizContainer');
-            questions.forEach((q, index) => {
-                const questionHtml = `
-                    <p>${q.question}</p>
-                    <input type="text" id="answer${index}">
-                `;
-                quizContainer.innerHTML += questionHtml;
-            });
+        function generateTable() {
+            const num = parseInt(document.getElementById('tableNumber').value);
+            let output = '';
+            document.getElementById('tableOutput').innerHTML = '';
+            for (let i = 1; i <= 10; i++) {
+                output = `${num} x ${i} = ${num * i}`;
+                const li = document.createElement('li');
+                li.innerText = output;
+                document.getElementById('tableOutput').appendChild(li);
+            }
         }
 
-        function checkAnswers() {
-            let resultsText = '';
-            questions.forEach((q, index) => {
-                const userAnswer = document.getElementById(`answer${index}`).value.toLowerCase();
-                if (userAnswer === q.answer) {
-                    resultsText += `Question ${index + 1}: Correct!<br>`;
-                } else {
-                    resultsText += `Question ${index + 1}: Incorrect. The correct answer is "${q.answer}".<br>`;
-                }
-            });
-            document.getElementById('results').innerHTML = resultsText;
+        function repeatText() {
+            const text = document.getElementById('repeatText').value;
+            const count = parseInt(document.getElementById('repeatCount').value);
+            let result = '';
+            let i = 0;
+            while (i < count) {
+                result += text + ' ';
+                i++;
+            }
+            document.getElementById('repeatOutput').innerText = result;
         }
 
-        createQuiz();
+        function clearLoops() {
+            document.getElementById('tableOutput').innerHTML = '';
+            document.getElementById('repeatOutput').innerText = '';
+            document.getElementById('tableNumber').value = '';
+            document.getElementById('repeatText').value = '';
+            document.getElementById('repeatCount').value = '';
+        }
     </script>
 </body>
 </html>

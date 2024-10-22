@@ -1,0 +1,63 @@
+<html>
+<head>
+    <link rel="stylesheet" href="default.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Function Demonstrations with Algorithms</h1>
+
+        <!-- Factorial Function -->
+        <h2>Calculate Factorial</h2>
+        <input type="number" id="factorialNum" placeholder="Enter a number">
+        <button onclick="calculateFactorial()">Calculate Factorial</button>
+        <p id="factorialResult"></p>
+
+        <!-- Fibonacci Function -->
+        <h2>Generate Fibonacci Sequence</h2>
+        <input type="number" id="fibonacciCount" placeholder="Enter how many numbers to generate">
+        <button onclick="generateFibonacci()">Generate Fibonacci</button>
+        <p id="fibonacciResult"></p>
+
+        <!-- Clear All Outputs -->
+        <button onclick="clearFunctions()">Clear All</button>
+    </div>
+
+    <script>
+        // Recursive function to calculate factorial
+        function calculateFactorial() {
+            const num = parseInt(document.getElementById('factorialNum').value);
+            const result = factorial(num);
+            document.getElementById('factorialResult').innerText = `Factorial of ${num} is ${result}`;
+        }
+
+        function factorial(n) {
+            if (n < 0) return "Invalid input"; // Handle negative input
+            if (n === 0 || n === 1) return 1; // Base case
+            return n * factorial(n - 1); // Recursive case
+        }
+
+        // Function to generate Fibonacci sequence
+        function generateFibonacci() {
+            const count = parseInt(document.getElementById('fibonacciCount').value);
+            const sequence = fibonacci(count);
+            document.getElementById('fibonacciResult').innerText = `Fibonacci Sequence: ${sequence.join(', ')}`;
+        }
+
+        function fibonacci(n) {
+            const fib = [0, 1]; // Starting values
+            for (let i = 2; i < n; i++) {
+                fib[i] = fib[i - 1] + fib[i - 2]; // Add the last two numbers to get the next
+            }
+            return fib.slice(0, n); // Return only up to the nth number
+        }
+
+        // Clear outputs
+        function clearFunctions() {
+            document.getElementById('factorialResult').innerText = '';
+            document.getElementById('fibonacciResult').innerText = '';
+            document.getElementById('factorialNum').value = '';
+            document.getElementById('fibonacciCount').value = '';
+        }
+    </script>
+</body>
+</html>

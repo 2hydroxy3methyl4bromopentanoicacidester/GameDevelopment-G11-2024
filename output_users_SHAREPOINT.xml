@@ -1,0 +1,16 @@
+<?xml version="1.0" ?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	<soap:Body>
+		<SearchPrincipalsResponse xmlns="http://schemas.microsoft.com/sharepoint/soap/">
+			<SearchPrincipalsResult>
+				<PrincipalInfo>
+					<AccountName>SHAREPOINT\system</AccountName>
+					<UserInfoID>1073741823</UserInfoID>
+					<DisplayName>System Account</DisplayName>
+					<IsResolved>true</IsResolved>
+					<PrincipalType>User</PrincipalType>
+				</PrincipalInfo>
+			</SearchPrincipalsResult>
+		</SearchPrincipalsResponse>
+	</soap:Body>
+</soap:Envelope>

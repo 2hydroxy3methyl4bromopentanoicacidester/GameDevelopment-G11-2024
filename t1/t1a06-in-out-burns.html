@@ -43,7 +43,7 @@
             function normalize(content){
                 newcontent = []
                 content.forEach(element => {
-                    newcontent.push("\"" + element + "\"")
+                    newcontent.push("\"" + element.split("\\").join("\\\\").replace("\"", "\\\"") + "\"")
                 });
                 return newcontent;
             }

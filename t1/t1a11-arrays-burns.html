@@ -1,0 +1,83 @@
+<html>
+<head>
+    <link rel="stylesheet" href="default.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Contact Management System</h1>
+
+        <!-- Add Contact -->
+        <h2>Add Contact</h2>
+        <input type="text" id="contactName" placeholder="Enter name">
+        <input type="text" id="contactEmail" placeholder="Enter email">
+        <button onclick="addContact()">Add Contact</button>
+        <p id="addContactOutput"></p>
+
+        <!-- Display All Contacts -->
+        <h2>Display All Contacts</h2>
+        <button onclick="displayContacts()">Display Contacts</button>
+        <p id="contactsDisplay"></p>
+
+        <!-- Remove Last Contact -->
+        <h2>Remove Last Contact</h2>
+        <button onclick="removeContact()">Remove Last Contact</button>
+        <p id="removeContactOutput"></p>
+
+        <!-- Clear All Outputs -->
+        <button onclick="clearContacts()">Clear All</button>
+    </div>
+
+    <script>
+        const contacts = [];
+
+        // Add contact to the array
+        function addContact() {
+            const name = document.getElementById('contactName').value;
+            const email = document.getElementById('contactEmail').value;
+            if (name && email) {
+                const contact = { name, email };
+                contacts.push(contact);
+                document.getElementById('addContactOutput').innerText = `Added: ${name} (${email})`;
+                clearInputs('contactName', 'contactEmail');
+            } else {
+                document.getElementById('addContactOutput').innerText = 'Please enter both name and email.';
+            }
+        }
+
+        // Display all contacts
+        function displayContacts() {
+            if (contacts.length > 0) {
+                const display = contacts.map(c => `${c.name} (Email: ${c.email})`).join('<br>');
+                document.getElementById('contactsDisplay').innerHTML = `Contacts:<br>${display}`;
+            } else {
+                document.getElementById('contactsDisplay').innerText = 'No contacts available!';
+            }
+        }
+
+        // Remove last contact from the array
+        function removeContact() {
+            if (contacts.length > 0) {
+                const removedContact = contacts.pop();
+                document.getElementById('removeContactOutput').innerText = `Removed: ${removedContact.name} (${removedContact.email})`;
+            } else {
+                document.getElementById('removeContactOutput').innerText = 'No contacts to remove!';
+            }
+            displayContacts(); // Update displayed contacts
+        }
+
+        // Clear outputs and contacts
+        function clearContacts() {
+            contacts.length = 0; // Clear contacts array
+            document.getElementById('addContactOutput').innerText = '';
+            document.getElementById('contactsDisplay').innerText = '';
+            document.getElementById('removeContactOutput').innerText = '';
+            clearInputs('contactName', 'contactEmail');
+        }
+
+        // Clear input fields
+        function clearInputs(...ids) {
+            ids.forEach(id => document.getElementById(id).value = '');
+        }
+    </script>
+</body>
+</html>

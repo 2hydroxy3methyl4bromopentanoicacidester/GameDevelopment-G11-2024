@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        form { margin-top: 20px; }
+        .res {
+            font-size: large;
+        }
+        * {
+            text-align: center;
+        }
+    </style>
+    <link rel="stylesheet" href="default.css">
+    <script>
+        function formatName(string) {
+            return string.charAt(0).toUpperCase() + string.slice(1);
+        }
+        function submitForm() {
+            const input = document.getElementById('userInput').value;
+            const ellisNames = [
+                "ellis",
+                "eliis",
+                "elis",
+                "jeremy",
+                "jermey",
+                "jeremu",
+                "hemery",
+            ]
+            const swagNames = [
+                "riley",
+                "burns",
+                "riely",
+                "bunrs",
+                "hames",
+                "james"
+            ]
+            const soyNames = [
+                "gurp",
+                "gurop",
+                "turp",
+                "furp",
+                "hurp",
+                "vurp",
+                "burp",
+                "khela",
+                "hurp",
+                "jhela",
+                "lhela",
+                "ihela",
+                "mhela",
+                ",hela",
+                "gavin"
+            ]
+            breakk = false;
+            swagNames.forEach(e=>{
+                console.log(input.toLowerCase(), e);
+                if(input.toLowerCase().includes(e) || input.toLowerCase() === e){
+                    document.getElementById("result").innerText = `OH MY GOD!!!! ITS OFF THE CHARTS!!!! IMMENSE MASCULINITY PRESENT!!`
+                    breakk = true;
+                    return;
+                }
+            })
+            soyNames.forEach(e=>{
+                console.log(input.toLowerCase(), e);
+                if(input.toLowerCase().includes(e) || input.toLowerCase() === e){
+                    document.getElementById("result").innerText = `ew. go away.`
+                    breakk = true;
+                    return;
+                }
+            })
+            ellisNames.forEach(e=>{
+                console.log(input.toLowerCase(), e);
+                if(input.toLowerCase().includes(e) || input.toLowerCase() === e){
+                    console.log("ellis detected");
+                    alert("too ultra masculine broke the js number data type limit");
+                    breakk = true;
+                    return;
+                }
+            })
+
+            if(breakk)
+                return;
+            
+                fetch(`https://api.genderize.io/?name=${input}`).then(resp=>{
+                resp.json().then(body=>{
+                    if(body["gender"] === null)
+                        document.getElementById("result").innerText = "We honestly have no clue."
+                    else
+                        document.getElementById("result").innerText = `Hello ${formatName(body["name"])}. We are ${body["probability"] * 100}% sure that you're a ${body["gender"]}.`
+                });
+            })
+        }
+    </script>
+</head>
+<body>
+    <h1>inputs (i wonder what happens if you enter gavin!!!!)</h1>
+    <form onsubmit="event.preventDefault(); submitForm();">
+        <label for="userInput">Enter something:</label>
+        <input type="text" id="userInput" required>
+        <button type="submit">Submit</button>
+        <br>
+        <br>
+        <p class="res" id="result"></p>
+        <p class="res" id="result2"></p>
+        <p class="res" id="result3"></p>
+    </form>
+</body>
+</html>

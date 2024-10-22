@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super Swaggy Gamer Sauce</title>
+    <style>
+        /* Background and fonts */
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #1a1a2e;
+            font-family: 'Orbitron', sans-serif;
+            color: #f1f1f1;
+            text-align: center;
+        }
+
+        h1 {
+            color: #00ff88;
+            font-size: 4rem;
+            margin-top: 2rem;
+        }
+
+        p {
+            font-size: 1.5rem;
+            margin: 1rem;
+        }
+
+        /* Button styling */
+        .gamer-button {
+            display: inline-block;
+            background-color: #ff0088;
+            border: none;
+            border-radius: 12px;
+            padding: 1rem 2rem;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: 0.3s ease;
+        }
+
+        .gamer-button:hover {
+            background-color: #ff5500;
+            transform: scale(1.1);
+        }
+
+        /* Container for swaggy content */
+        .gamer-container {
+            max-width: 800px;
+            margin: auto;
+            padding: 2rem;
+        }
+
+        .gamer-sauce {
+            background: #ff0055;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.7);
+        }
+
+        /* Glitch effect on text */
+        .glitch {
+            position: relative;
+            color: white;
+            font-size: 2.5rem;
+        }
+
+        .glitch::before,
+        .glitch::after {
+            content: 'Gamer Sauce Activated!';
+            position: absolute;
+            left: 0;
+            top: 0;
+            color: #ff0088;
+            background: black;
+            overflow: hidden;
+            clip: rect(0, 900px, 0, 0);
+            animation: glitch 2s infinite;
+        }
+
+        .glitch::after {
+            color: #00ff88;
+            z-index: -1;
+            animation: glitch 2s infinite reverse;
+        }
+
+        /* Glitch animation */
+        @keyframes glitch {
+            0% {
+                clip: rect(42px, 9999px, 44px, 0);
+                transform: skew(0.02deg);
+            }
+            5% {
+                clip: rect(85px, 9999px, 19px, 0);
+                transform: skew(0.04deg);
+            }
+            10% {
+                clip: rect(15px, 9999px, 33px, 0);
+                transform: skew(0.01deg);
+            }
+            15% {
+                clip: rect(38px, 9999px, 35px, 0);
+                transform: skew(0.02deg);
+            }
+        }
+
+        /* Flash effect */
+        @keyframes flash {
+            0% { opacity: 1; }
+            50% { opacity: 0.3; }
+            100% { opacity: 1; }
+        }
+
+        .flash {
+            animation: flash 0.1s 5;
+        }
+
+        /* Media Queries */
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            p {
+                font-size: 1rem;
+            }
+
+            .glitch {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="gamer-container">
+        <h1>Super Swaggy Gamer Sauce</h1>
+        <p>Get ready for the ultimate gamer experience, powered by pure swag!</p>
+        <div class="gamer-sauce">
+            <div class="glitch" id="gamerText">Gamer Sauce Activated!</div>
+            <p>Take your gaming to the next level with intense skills and endless style.</p>
+            <button class="gamer-button" id="activateBtn">Activate Swag</button>
+        </div>
+    </div>
+
+    <script>
+        // Button element and glitch text
+        const activateBtn = document.getElementById('activateBtn');
+        const gamerText = document.getElementById('gamerText');
+ 
+        // Function to add flash effect
+        function addFlashEffect() {
+            gamerText.classList.add('flash');
+            setTimeout(() => {
+                gamerText.classList.remove('flash');
+            }, 500); // remove flash effect after 500ms
+        }
+
+        // Function to play a sound when button is clicked
+        function playGamerSound() {
+            const audio = new Audio('https://freesound.org/data/previews/459/459526_7805191-lq.mp3');
+            audio.play();
+        }
+
+        // Click event for activating swag
+        activateBtn.addEventListener('click', () => {
+            addFlashEffect(); // Flash effect
+            playGamerSound(); // Play sound
+            activateBtn.textContent = "Swag Activated!";
+        });
+    </script>
+</body>
+</html>

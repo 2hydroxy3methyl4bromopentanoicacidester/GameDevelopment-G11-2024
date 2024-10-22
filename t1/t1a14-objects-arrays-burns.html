@@ -1,0 +1,80 @@
+<html>
+<head>
+    <link rel="stylesheet" href="default.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Library Management</h1>
+
+        <!-- Add Book -->
+        <h2>Add Book</h2>
+        <input type="text" id="bookTitle" placeholder="Enter book title">
+        <input type="text" id="bookAuthor" placeholder="Enter author name">
+        <button onclick="addBook()">Add Book</button>
+        <p id="bookOutput"></p>
+
+        <!-- Display Books -->
+        <h2>Display Library</h2>
+        <button onclick="displayBooks()">Show Books</button>
+        <pre id="libraryDisplay"></pre>
+
+        <!-- Remove Book -->
+        <h2>Remove Book</h2>
+        <input type="number" id="removeIndex" placeholder="Index to remove">
+        <button onclick="removeBook()">Remove Book</button>
+        <p id="removeOutput"></p>
+
+        <!-- Clear All Books -->
+        <button onclick="clearLibrary()">Clear Library</button>
+    </div>
+
+    <script>
+        const library = [];
+
+        // Add a book to the library
+        function addBook() {
+            const title = document.getElementById('bookTitle').value;
+            const author = document.getElementById('bookAuthor').value;
+            if (title && author) {
+                library.push({ title, author });
+                document.getElementById('bookOutput').innerText = `Added: ${title}`;
+                clearInputs('bookTitle', 'bookAuthor');
+            } else {
+                document.getElementById('bookOutput').innerText = 'Please enter valid book details.';
+            }
+        }
+
+        // Display all books
+        function displayBooks() {
+            document.getElementById('libraryDisplay').innerText = JSON.stringify(library, null, 2) || 'No books available!';
+        }
+
+        // Remove a book from the library
+        function removeBook() {
+            const index = parseInt(document.getElementById('removeIndex').value);
+            if (index >= 0 && index < library.length) {
+                const removedBook = library.splice(index, 1);
+                document.getElementById('removeOutput').innerText = `Removed: ${removedBook[0].title}`;
+                displayBooks();
+                clearInputs('removeIndex');
+            } else {
+                document.getElementById('removeOutput').innerText = 'Invalid index.';
+            }
+        }
+
+        // Clear all books
+        function clearLibrary() {
+            library.length = 0; // Clear library
+            document.getElementById('libraryDisplay').innerText = '';
+            document.getElementById('bookOutput').innerText = '';
+            document.getElementById('removeOutput').innerText = '';
+            clearInputs('bookTitle', 'bookAuthor', 'removeIndex');
+        }
+
+        // Clear input fields
+        function clearInputs(...ids) {
+            ids.forEach(id => document.getElementById(id).value = '');
+        }
+    </script>
+</body>
+</html>

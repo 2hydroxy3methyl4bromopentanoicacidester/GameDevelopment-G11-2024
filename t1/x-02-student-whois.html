@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link rel="stylesheet" href="default.css">
+    <style>
+        div._2e-sbs {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        div._2e-sbs>* {
+            margin: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1 align="center"><b>Student Lookup</b></h1><br>
+    <div class="_2e-sbs">
+        <input id="studentname" type="text" placeholder="Student Name" oninput="toggleInputs('name')">
+        <p align="center"><b>OR</b></p>
+        <input id="studentid" type="number" placeholder="Student ID" oninput="toggleInputs('id')">
+    </div>
+
+    <button id="submit" style="width: 100%; margin-top: 5px;" onclick="query()">Lookup</button>
+
+    <script>
+        const nameInput = document.getElementById('studentname');
+        const idInput = document.getElementById('studentid');
+
+        function toggleInputs(type) {
+            if (type === 'name') {
+                // If Student Name is being typed in, disable Student ID
+                idInput.disabled = nameInput.value.length > 0;
+            } else if (type === 'id') {
+                // If Student ID is being typed in, disable Student Name
+                nameInput.disabled = idInput.value.length > 0;
+            }
+            buttonAvailability()
+        }
+
+        function buttonAvailability() {
+            if (nameInput.value.length > 0 || idInput.value.length > 0) {
+                document.getElementById("submit").removeAttribute("disabled")
+            } else {
+                document.getElementById("submit").setAttribute("disabled", "")
+            }
+        }
+
+        function query() {
+            const studentName = document.getElementById('studentname').value;
+            const studentId = document.getElementById('studentid').value;
+
+            if (studentName) {
+                console.log("Looking up by name:", studentName);
+            } else if (studentId) {
+                console.log("Looking up by ID:", studentId);
+            } else {
+                alert("Please enter a student name or ID.");
+            }
+        }
+
+        document.querySelectorAll("input[type='number']").forEach(e => {
+            console.log(e)
+            e.addEventListener("wheel", function (event) {
+                if(e.disabled)
+                    return;
+
+                val = parseFloat(e.value)
+                console.log(val, Object.is(val, NaN))
+                if (Object.is(val, NaN))
+                    val = 0
+                step = 1;
+                if (event.deltaY < 0) {
+                    e.value = val + step;
+                    console.log("scrolled up, value:", parseFloat(e.value));
+                } else {
+                    e.value = val - step;
+                    console.log("scrolled down, value:", parseFloat(e.value));
+                }
+                toggleInputs('id')
+                event.preventDefault();
+            })
+        })
+
+        buttonAvailability()
+    </script>
+</body>
+
+</html>

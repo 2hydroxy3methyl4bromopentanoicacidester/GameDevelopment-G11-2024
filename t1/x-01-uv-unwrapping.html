@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        canvas {
+            border: 1px solid black;
+            background-color: black;
+        }
+    </style>
+</head>
+<body>
+    <h1>OBJ Parser</h1>
+    <input type="file" id="objFileInput" accept=".obj">
+    <button onclick="extractUVs()">Map UV Coordinates</button>
+    <button onclick="loadModel()">Spin Model</button>
+    <div id="container"></div>
+
+    <h2>UV Map</h2>
+    <canvas id="uvCanvas" width="512" height="512"></canvas>
+
+    <!-- Include Three.js Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- Include OBJLoader -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/OBJLoader.js"></script>
+
+    <script>
+        function extractUVs() {
+            const fileInput = document.getElementById('objFileInput');
+            const file = fileInput.files[0];
+
+            if (!file) {
+                alert("Please select an OBJ file.");
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const text = event.target.result;
+                const faceUVs = parseObjForFaceUVs(text);
+                drawUVMap(faceUVs);
+            };
+            reader.readAsText(file);
+        }
+
+        function parseObjForFaceUVs(objData) {
+            const uvs = [];
+            const faces = [];
+            const lines = objData.split('\n');
+
+            lines.forEach(line => {
+                const parts = line.trim().split(/\s+/);
+
+                // Extract UV coordinates (vt)
+                if (parts[0] === 'vt') {
+                    const u = parseFloat(parts[1]);
+                    const v = parseFloat(parts[2]);
+                    uvs.push({ u, v });
+                }
+
+                // Extract face data (f)
+                if (parts[0] === 'f') {
+                    // Faces with various vertex counts: f v1/vt1 v2/vt2 v3/vt3 ...
+                    const face = parts.slice(1).map(item => {
+                        const indices = item.split('/');
+                        return {
+                            vertexIndex: parseInt(indices[0]), // Vertex index (ignored)
+                            uvIndex: parseInt(indices[1]) - 1 // UV index, correcting to 0-based
+                        };
+                    });
+                    faces.push(face);
+                }
+            });
+
+            // Map UVs to faces (dynamic number of vertices)
+            const faceUVs = faces.map(face => {
+                return face.map(vertex => uvs[vertex.uvIndex]);
+            });
+
+            return faceUVs;
+        }
+
+        function getRandomColor() {
+            const h = Math.floor(Math.random() * 359);
+            const s = '100%';
+            const l = '50%';
+            return `hsl(${h}, ${s}, ${l})`;
+        }
+
+        function insetUVs(face, insetAmount) {
+            // Calculate the center of the face
+            const center = face.reduce((acc, uv) => {
+                acc.u += uv.u;
+                acc.v += uv.v;
+                return acc;
+            }, { u: 0, v: 0 });
+
+            center.u /= face.length;
+            center.v /= face.length;
+
+            // Move each UV slightly towards the center
+            return face.map(uv => {
+                return {
+                    u: uv.u + (center.u - uv.u) * insetAmount,
+                    v: uv.v + (center.v - uv.v) * insetAmount
+                };
+            });
+        }
+
+        function drawUVMap(faceUVs) {
+            const canvas = document.getElementById('uvCanvas');
+            const ctx = canvas.getContext('2d');
+
+            // Clear the canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Scaling factor for the UV space (0-1 to canvas size)
+            const scale = canvas.width;
+
+            faceUVs.forEach(face => {
+                // Draw the filled face
+                ctx.beginPath();
+                face.forEach((uv, index) => {
+                    const x = uv.u * scale;
+                    const y = (1 - uv.v) * scale; // Flip vertically for canvas Y axis
+                    if (index === 0) {
+                        ctx.moveTo(x, y); // Move to the first vertex
+                    } else {
+                        ctx.lineTo(x, y); // Draw line to the next vertex
+                    }
+                });
+                // Close the face
+                const firstUV = face[0];
+                ctx.lineTo(firstUV.u * scale, (1 - firstUV.v) * scale);
+
+                // Fill the face with a random color
+                ctx.fillStyle = getRandomColor();
+                ctx.fill();
+
+                // Draw inset lines
+                ctx.beginPath();
+                const insetFace = insetUVs(face, 0.1); // Inset the face by 10%
+                insetFace.forEach((uv, index) => {
+                    const x = uv.u * scale;
+                    const y = (1 - uv.v) * scale; // Flip vertically for canvas Y axis
+                    if (index === 0) {
+                        ctx.moveTo(x, y); // Move to the first vertex
+                    } else {
+                        ctx.lineTo(x, y); // Draw line to the next vertex
+                    }
+                });
+                // Close the inset face
+                const firstInsetUV = insetFace[0];
+                ctx.lineTo(firstInsetUV.u * scale, (1 - firstInsetUV.v) * scale);
+
+                // Set a black stroke color for the inset lines
+                ctx.strokeStyle = 'black';
+                ctx.stroke();
+            });
+        }
+
+
+
+        let scene, camera, renderer, model;
+        let container = document.getElementById('container');
+
+        function init() {
+            // Create the scene
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0xdddddd);
+
+            // Set up the camera
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.z = 5;
+
+            // Create the renderer
+            renderer = new THREE.WebGLRenderer();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            container.appendChild(renderer.domElement);
+
+            // Add lights
+            const light = new THREE.DirectionalLight(0xffffff, 1);
+            light.position.set(1, 1, 1).normalize();
+            scene.add(light);
+
+            const ambientLight = new THREE.AmbientLight(0x404040); // soft white light
+            scene.add(ambientLight);
+        }
+
+        function loadModel() {
+            const fileInput = document.getElementById('objFileInput');
+            const file = fileInput.files[0];
+
+            if (!file) {
+                alert("Please select an OBJ file.");
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const objData = event.target.result;
+                const objLoader = new THREE.OBJLoader();
+
+                // Load model from the file contents
+                model = objLoader.parse(objData);
+
+                // Add random colors for each face
+                model.traverse(child => {
+                    if (child.isMesh) {
+                        child.material = new THREE.MeshBasicMaterial({ vertexColors: true });
+                        const geometry = child.geometry;
+                        const colors = [];
+
+                        for (let i = 0; i < geometry.attributes.position.count; i++) {
+                            colors.push(Math.random(), Math.random(), Math.random());
+                        }
+
+                        geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+                    }
+                });
+
+                scene.add(model);
+            };
+
+            reader.readAsText(file);
+
+            // Add animation
+            animate();
+        }
+
+        speed = 0.01;
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // Rotate the model on Y-axis
+            if (model) {
+                console.log(speed);
+                speed *= 1.001;
+                model.rotation.y += speed;
+                model.rotation.z += speed;
+            }
+
+            renderer.render(scene, camera);
+        }
+
+        // Initialize Three.js
+        init();
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            renderer.setSize(width, height);
+            camera.aspect = width / height;
+            camera.updateProjectionMatrix();
+        });
+    </script>
+</body>
+</html>

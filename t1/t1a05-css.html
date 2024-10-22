@@ -1,0 +1,129 @@
+<html>
+<head>
+    <link rel="stylesheet" href="default.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Advanced CSS Manipulation</h1>
+
+        <!-- Background Color -->
+        <div>
+            <h2>Change Background Color</h2>
+            <input type="color" id="bgColor">
+            <button onclick="changeBgColor()">Apply</button>
+        </div>
+
+        <!-- Text Color -->
+        <div>
+            <h2>Change Text Color</h2>
+            <input type="color" id="textColor">
+            <button onclick="changeTextColor()">Apply</button>
+        </div>
+
+        <!-- Font Size -->
+        <div>
+            <h2>Change Font Size</h2>
+            <input type="range" id="fontSize" min="10" max="50" value="16">
+            <span id="fontSizeDisplay">16px</span>
+            <button onclick="changeFontSize()">Apply</button>
+        </div>
+
+        <!-- Padding -->
+        <div>
+            <h2>Change Padding</h2>
+            <input type="range" id="padding" min="0" max="50" value="10">
+            <span id="paddingDisplay">10px</span>
+            <button onclick="changePadding()">Apply</button>
+        </div>
+
+        <!-- Border Radius -->
+        <div>
+            <h2>Change Border Radius</h2>
+            <input type="range" id="borderRadius" min="0" max="100" value="5">
+            <span id="borderRadiusDisplay">5px</span>
+            <button onclick="changeBorderRadius()">Apply</button>
+        </div>
+
+        <!-- Border Width -->
+        <div>
+            <h2>Change Border Width</h2>
+            <input type="range" id="borderWidth" min="0" max="20" value="1">
+            <span id="borderWidthDisplay">1px</span>
+            <button onclick="changeBorderWidth()">Apply</button>
+        </div>
+
+        <!-- Border Color -->
+        <div>
+            <h2>Change Border Color</h2>
+            <input type="color" id="borderColor">
+            <button onclick="changeBorderColor()">Apply</button>
+        </div>
+
+        <!-- Box Shadow -->
+        <div>
+            <h2>Toggle Box Shadow</h2>
+            <button onclick="toggleBoxShadow()">Toggle Shadow</button>
+        </div>
+
+        <!-- Target Element -->
+        <div id="targetElement" style="margin-top: 30px; padding: 10px; border: 1px solid #4ca8ff; border-radius: 5px; background-color: #333; color: #fff;">
+            This is the element you're customizing.
+        </div>
+    </div>
+
+    <script>
+        // Change Background Color
+        function changeBgColor() {
+            document.getElementById('targetElement').style.backgroundColor = document.getElementById('bgColor').value;
+        }
+
+        // Change Text Color
+        function changeTextColor() {
+            document.getElementById('targetElement').style.color = document.getElementById('textColor').value;
+        }
+
+        // Change Font Size
+        function changeFontSize() {
+            const size = document.getElementById('fontSize').value + 'px';
+            document.getElementById('targetElement').style.fontSize = size;
+            document.getElementById('fontSizeDisplay').innerText = size;
+        }
+
+        // Change Padding
+        function changePadding() {
+            const padding = document.getElementById('padding').value + 'px';
+            document.getElementById('targetElement').style.padding = padding;
+            document.getElementById('paddingDisplay').innerText = padding;
+        }
+
+        // Change Border Radius
+        function changeBorderRadius() {
+            const radius = document.getElementById('borderRadius').value + 'px';
+            document.getElementById('targetElement').style.borderRadius = radius;
+            document.getElementById('borderRadiusDisplay').innerText = radius;
+        }
+
+        // Change Border Width
+        function changeBorderWidth() {
+            const width = document.getElementById('borderWidth').value + 'px';
+            document.getElementById('targetElement').style.borderWidth = width;
+            document.getElementById('borderWidthDisplay').innerText = width;
+        }
+
+        // Change Border Color
+        function changeBorderColor() {
+            document.getElementById('targetElement').style.borderColor = document.getElementById('borderColor').value;
+        }
+
+        // Toggle Box Shadow
+        function toggleBoxShadow() {
+            const target = document.getElementById('targetElement');
+            if (target.style.boxShadow) {
+                target.style.boxShadow = '';
+            } else {
+                target.style.boxShadow = '0px 4px 10px rgba(0,0,0,0.5)';
+            }
+        }
+    </script>
+</body>
+</html>

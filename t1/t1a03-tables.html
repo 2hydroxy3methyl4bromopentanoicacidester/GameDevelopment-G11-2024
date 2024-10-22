@@ -1,0 +1,47 @@
+<html>
+<head>
+    <link rel="stylesheet" href="default.css">
+</head>
+<body>
+    <div class="container">
+        <h1>table stuff</h1>
+
+        <table border="1" id="myTable">
+            <tr>
+                <th>Name</th>
+                <th>Age</th>
+            </tr>
+            <tr>
+                <td>John</td>
+                <td>25</td>
+            </tr>
+        </table>
+
+        <h2>Add New Row</h2>
+        <input type="text" id="name" placeholder="Name">
+        <input type="number" id="age" placeholder="Age">
+        <div class="_2e-sbs">
+            <button onclick="addRow()">Add Row</button>
+            <button onclick="removeRow()">Remove Last Row</button>
+        </div>
+    
+    </div>
+    <script>
+        function addRow() {
+            let name = document.getElementById('name').value;
+            let age = document.getElementById('age').value;
+            let table = document.getElementById('myTable');
+            let row = table.insertRow();
+            row.insertCell(0).innerText = name;
+            row.insertCell(1).innerText = age;
+        }
+
+        function removeRow() {
+            let table = document.getElementById('myTable');
+            if (table.rows.length > 1) {
+                table.deleteRow(-1);
+            }
+        }
+    </script>
+</body>
+</html>
