@@ -29,63 +29,135 @@
     <script>
         const nameInput = document.getElementById('studentname');
         const idInput = document.getElementById('studentid');
+        let principalsArray = [];
 
         function toggleInputs(type) {
             if (type === 'name') {
-                // If Student Name is being typed in, disable Student ID
                 idInput.disabled = nameInput.value.length > 0;
             } else if (type === 'id') {
-                // If Student ID is being typed in, disable Student Name
                 nameInput.disabled = idInput.value.length > 0;
             }
-            buttonAvailability()
+            buttonAvailability();
         }
 
         function buttonAvailability() {
+            const submitBtn = document.getElementById("submit");
             if (nameInput.value.length > 0 || idInput.value.length > 0) {
-                document.getElementById("submit").removeAttribute("disabled")
+                submitBtn.removeAttribute("disabled");
             } else {
-                document.getElementById("submit").setAttribute("disabled", "")
+                submitBtn.setAttribute("disabled", "");
             }
         }
 
+        function levenshtein(a, b) {
+            const matrix = [];
+
+            if (a.length === 0) return b.length;
+            if (b.length === 0) return a.length;
+
+            for (let i = 0; i <= b.length; i++) {
+                matrix[i] = [i];
+            }
+
+            for (let j = 0; j <= a.length; j++) {
+                matrix[0][j] = j;
+            }
+
+            for (let i = 1; i <= b.length; i++) {
+                for (let j = 1; j <= a.length; j++) {
+                    if (b.charAt(i - 1) === a.charAt(j - 1)) {
+                        matrix[i][j] = matrix[i - 1][j - 1];
+                    } else {
+                        matrix[i][j] = Math.min(matrix[i - 1][j - 1] + 1, Math.min(matrix[i][j - 1] + 1, matrix[i - 1][j] + 1));
+                    }
+                }
+            }
+
+            return matrix[b.length][a.length];
+        }
+
+        function searchByName(inputName) {
+            const threshold = 3; // Adjust based on allowed typo severity
+            return principalsArray.filter(principal => {
+                const displayName = principal.DisplayName.toLowerCase();
+                const inputLower = inputName.toLowerCase();
+                const distance = levenshtein(displayName, inputLower);
+                return distance <= threshold || displayName.includes(inputLower);
+            });
+        }
+
+        function searchByStudentNumber(inputId) {
+            return principalsArray.filter(principal => principal.StudentNumber === inputId);
+        }
+
         function query() {
-            const studentName = document.getElementById('studentname').value;
-            const studentId = document.getElementById('studentid').value;
+            const studentName = nameInput.value;
+            const studentId = idInput.value;
+
+            let results = [];
 
             if (studentName) {
-                console.log("Looking up by name:", studentName);
+                results = searchByName(studentName);
             } else if (studentId) {
-                console.log("Looking up by ID:", studentId);
+                results = searchByStudentNumber(studentId);
+            }
+
+            if (results.length > 0) {
+                console.log("Search results:", results);
             } else {
-                alert("Please enter a student name or ID.");
+                alert("No matches found.");
             }
         }
 
         document.querySelectorAll("input[type='number']").forEach(e => {
-            console.log(e)
             e.addEventListener("wheel", function (event) {
-                if(e.disabled)
-                    return;
+                if (e.disabled) return;
 
-                val = parseFloat(e.value)
-                console.log(val, Object.is(val, NaN))
-                if (Object.is(val, NaN))
-                    val = 0
-                step = 1;
+                let val = parseFloat(e.value);
+                if (isNaN(val)) val = 0;
+                const step = 1;
+
                 if (event.deltaY < 0) {
                     e.value = val + step;
-                    console.log("scrolled up, value:", parseFloat(e.value));
                 } else {
                     e.value = val - step;
-                    console.log("scrolled down, value:", parseFloat(e.value));
                 }
-                toggleInputs('id')
+                toggleInputs('id');
                 event.preventDefault();
-            })
-        })
+            });
+        });
 
-        buttonAvailability()
+        buttonAvailability();
+
+        fetch("../output_users.xml")
+            .then((response) => response.text())
+            .then((text) => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(text, "text/xml");
+
+                const principalInfos = doc.getElementsByTagName("PrincipalInfo");
+
+                for (let i = 0; i < principalInfos.length; i++) {
+                    const principal = principalInfos[i];
+                    const emailElement = principal.getElementsByTagName("Email")[0];
+
+                    if (emailElement) {
+                        const principalData = {
+                            AccountName: principal.getElementsByTagName("AccountName")[0].textContent,
+                            DisplayName: principal.getElementsByTagName("DisplayName")[0].textContent,
+                            Email: emailElement.textContent,
+                            StudentNumber: emailElement.textContent.split("@")[0],
+                            Title: principal.getElementsByTagName("Title")[0] ? principal.getElementsByTagName("Title")[0].textContent : "null",
+                        };
+                        principalsArray.push(principalData);
+                    }
+                }
+
+                console.log("Fetched principals data:", principalsArray);
+            })
+            .catch((error) => {
+                console.error("Error fetching or parsing the XML:", error);
+            });
     </script>
 </body>
 
