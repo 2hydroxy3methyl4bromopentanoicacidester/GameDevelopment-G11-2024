@@ -1,1 +1,86 @@
-index2
+<html>
+    <head>
+        <link rel="stylesheet" href="default.css">
+        <style>
+            * {
+                font-family: 'Courier New', Courier, monospace;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>index.html</h1>
+        <h3 style="margin-bottom: -5px;">Regular Assignments</h3>
+        <hr>
+        <div id="regular_assignments">
+            <button class="h-e i-b" onclick="refer('t1a01-basic')">
+                    t1a01-basic.html
+            </button>
+        </div>
+
+        <br><br>
+
+        <h3 style="margin-bottom: -5px;"><b style="font-size: x-large;"><i><u>X</u></i></b> Assignments</h3>
+        <hr>
+        <div id="xassign_assignments">
+            <button class="h-e i-b" onclick="refer('t1a01-basic')">
+                    t1a01-basic.html
+            </button>
+        </div>
+
+        <script>
+            const regular = [
+                "t1a01-basic.html",
+                "t1a02-proper.html",
+                "t1a03-tables.html",
+                "t1a04-forms.html",
+                "t1a05-css.html",
+                "t1a06-in-out-burns.html",
+                "t1a07-functions-burns.html",
+                "t1a08-variables-burns.html",
+                "t1a09-decisions-if-burns.html",
+                "t1a10-loops-burns.html",
+                "t1a11-arrays-burns.html",
+                "t1a12-objects-structs-burns.html",
+                "t1a13-json-burns.html",
+                "t1a14-objects-arrays-burns.html",
+                "t1a15-events-burns.html",
+                "t1a16-multi-d-arrays-burns.html",
+                "t1a18-extend-class-burns.html"
+            ]
+            const xassign = [
+                "x-01-uv-unwrapping.html",
+                "x-02-student-whois.html",
+                "x-03-stolen-google-face-thing.html"
+            ]
+            
+            const regular_container = document.getElementById("regular_assignments")
+            const xassign_container = document.getElementById("xassign_assignments")
+
+            regular_container.innerHTML = ""
+            xassign_container.innerHTML = ""
+
+            function refer(path){
+                window.location = path
+            }
+
+            function createButton(filename){
+                var button = document.createElement("button")
+                button.className = "h-e i-b"
+                button.onclick = () => { refer(filename) }
+                
+                button.innerText = filename
+                return button
+            }
+
+            function writetocontainer(container, filenames){
+                filenames.forEach(filename=>{
+                    container.appendChild(createButton(filename))
+                    container.appendChild(document.createElement("br"))
+                })
+            }
+
+            writetocontainer(regular_container, regular)
+            writetocontainer(xassign_container, xassign)
+        </script>
+    </body>
+</html>

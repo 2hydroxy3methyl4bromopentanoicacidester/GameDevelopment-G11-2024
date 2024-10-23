@@ -1,9 +1,29 @@
-/* Basic CSS reset */
 * {
     text-align: center;
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+}
+
+hr {
+    margin: auto;
+    border: 1px solid #808080;
+    width: 90%;
+}
+/*hover-expand*/
+*.h-e {
+    transition: font-size .065s ease-in-out;
+}
+*.h-e:hover {
+    font-size: 14px;
+}
+/*index button*/
+button.i-b {
+    width: 50%;
+    margin-top: 10px;
+    box-shadow: 0px 0px 15px -3px rgba(93,149,255,0.75);
+    -webkit-box-shadow: 0px 0px 15px -3px rgba(93,149,255,0.75);
+    -moz-box-shadow: 0px 0px 15px -3px rgba(93,149,255,0.75);
 }
 
 div._2e-sbs {
