@@ -1,6 +1,11 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="default.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.25.0/themes/prism.min.css" />
+    <title>JSON Editor with Format Converter</title>
 </head>
 <body>
     <div class="container">
@@ -9,66 +14,87 @@
         <h2>Input JSON Data</h2>
         <textarea id="jsonInput" placeholder='{"name": "John", "age": 30}'></textarea>
         <button onclick="validateJSON()">Validate JSON</button>
+        <button onclick="applyPlaceholder()">Fill Placeholder</button>
+        <button onclick="clearFields()">Clear</button>
         <p id="jsonMessage"></p>
 
         <button onclick="convertToXML()">Convert to XML</button>
         <button onclick="convertToYAML()">Convert to YAML</button>
+        <button onclick="copyOutput()">Copy Output</button>
         
         <h2>Converted Output</h2>
-        <pre id="convertedOutput" style="text-align: left;"></pre>
+        <pre id="convertedOutput" class="language-xml" style="text-align: left;"></pre>
 
         <script type='text/javascript' src="xml2json.js"></script>
-    </div>
-
-    <script> // welcome to the wonderful world of my coding practices. comment stuff out and dont delete it after it works (what if i need it!!!!)
-        function validateJSON() {
-            const jsonData = document.getElementById('jsonInput').value;
-            try {
-                JSON.parse(jsonData);
-                document.getElementById('jsonMessage').innerText = 'Valid JSON!';
-            } catch (error) {
-                document.getElementById('jsonMessage').innerText = 'Invalid JSON!';
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.25.0/prism.min.js"></script>
+        <script>
+            function validateJSON() {
+                const jsonData = document.getElementById('jsonInput').value;
+                try {
+                    JSON.parse(jsonData);
+                    document.getElementById('jsonMessage').innerText = 'Valid JSON!';
+                } catch (error) {
+                    document.getElementById('jsonMessage').innerText = 'Invalid JSON!';
+                }
             }
-        }
-        let yaml = null; 
+            function applyPlaceholder() {
+                document.getElementById('jsonInput').value = document.getElementById('jsonInput').getAttribute("placeholder");
+            }
 
-        import('https://cdn.jsdelivr.net/npm/yaml@2.5.0/browser/index.min.js')
-            .then(module => {
-                yaml = module;
-            });
-        // import('https://raw.githubusercontent.com/abdolence/x2js/refs/heads/master/xml2json.js')
-        //     .then(module => {
-        //         // yaml = module; 
-        //     });
-        var x2js = new X2JS();
-        function convertToXML() {
-            const jsonData = document.getElementById('jsonInput').value;
-            // try {
-                const jsonObject = JSON.parse(jsonData);
-                const xml = jsonToXML(jsonObject);
-                document.getElementById('convertedOutput').innerText = xml;
-            // } catch (error) {
-            //     document.getElementById('convertedOutput').innerText = 'Invalid JSON!';
-            // }
-        }
-        function convertToYAML() {
-            const jsonData = document.getElementById('jsonInput').value;
-            // try {
-                const jsonObject = JSON.parse(jsonData);
-                const yamll = jsonToYAML(jsonObject);
-                document.getElementById('convertedOutput').innerText = yamll;
-            // } catch (error) {
-            //     document.getElementById('convertedOutput').innerText = 'Invalid JSON!';
-            // }
-        }
+            let yaml = null; 
+            import('https://cdn.jsdelivr.net/npm/yaml@2.5.0/browser/index.min.js')
+                .then(module => {
+                    yaml = module;
+                });
 
-        function jsonToXML(json) {
-            return x2js.json2xml_str(json)
-        }
+            var x2js = new X2JS();
+            function convertToXML() {
+                const jsonData = document.getElementById('jsonInput').value;
+                try {
+                    const jsonObject = JSON.parse(jsonData);
+                    const xml = jsonToXML(jsonObject);
+                    document.getElementById('convertedOutput').innerText = xml;
+                } catch (error) {
+                    document.getElementById('convertedOutput').innerText = 'Conversion failed: ' + error.message;
+                }
+            }
 
-        function jsonToYAML(json) {
-            return yaml.stringify(json);
-        }
-    </script>
+            function convertToYAML() {
+                const jsonData = document.getElementById('jsonInput').value;
+                try {
+                    const jsonObject = JSON.parse(jsonData);
+                    const yamll = jsonToYAML(jsonObject);
+                    document.getElementById('convertedOutput').innerText = yamll;
+                } catch (error) {
+                    document.getElementById('convertedOutput').innerText = 'Conversion failed: ' + error.message;
+                }
+            }
+
+            function jsonToXML(json) {
+                return x2js.json2xml_str(json);
+            }
+
+            function jsonToYAML(json) {
+                return yaml.stringify(json);
+            }
+
+            function clearFields() {
+                document.getElementById('jsonInput').value = '';
+                document.getElementById('convertedOutput').innerText = '';
+                document.getElementById('jsonMessage').innerText = '';
+            }
+
+            function copyOutput() {
+                const output = document.getElementById('convertedOutput').innerText;
+                navigator.clipboard.writeText(output)
+                    .then(() => {
+                        console.log('Output copied to clipboard!');
+                    })
+                    .catch(err => {
+                        alert('Failed to copy output: ' + err);
+                    });
+            }
+        </script>
+    </div>
 </body>
 </html>
