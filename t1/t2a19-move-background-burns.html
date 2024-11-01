@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Collection Game with Matter.js</title>
+    <style>
+        body {
+            background-color: white;
+            position: relative;
+            overflow: hidden;
+            color: black;
+            font-family: Arial, sans-serif;
+        }
+
+        #myVideo {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+        }
+
+        #player {
+            position: absolute;
+            width: 100px;
+            height: 80px;
+            z-index: 1;
+            background-image: url('fg.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        #item {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background-image: url('item.jpg');
+            background-size: cover;
+            display: none;
+        }
+
+        #score,
+        #timer,
+        #itemsPerSecond {
+            position: absolute;
+            font-size: 24px;
+            z-index: 2;
+        }
+
+        #score {
+            top: 20px;
+            left: 20px;
+        }
+
+        #timer {
+            top: 20px;
+            right: 20px;
+        }
+
+        #itemsPerSecond {
+            top: 60px;
+            right: 20px;
+        }
+
+        #endScreen {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 20px;
+            display: none;
+            text-align: center;
+            z-index: 3;
+        }
+
+        #cooldownBar {
+            position: absolute;
+            top: 100px;
+            left: 20px;
+            width: 200px;
+            height: 20px;
+            background-color: rgba(0, 0, 0, 0.2);
+        }
+
+        #cooldownFill {
+            height: 100%;
+            background-color: red;
+            width: 100%;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.17.1/matter.min.js"></script>
+</head>
+
+<body id="myBody">
+
+    <video autoplay muted loop id="myVideo">
+        <source src="pipes.mp4" type="video/mp4">
+    </video>
+
+    <div id="score">Score: 0</div>
+    <div id="timer">Time: 0</div>
+    <div id="itemsPerSecond">Items/Sec: 0</div>
+    <div id="player"></div>
+    <div id="item"></div>
+    <div id="cooldownBar">
+        <div id="cooldownFill"></div>
+    </div>
+
+    <div id="endScreen">
+        <h1>Game Over</h1>
+        <p id="finalScore"></p>
+        <p id="finalTime"></p>
+        <button onclick="restartGame()">Restart</button>
+    </div>
+
+    <script>
+        const { Engine, Bodies, Composite } = Matter;
+
+        // Create an engine
+        const engine = Engine.create();
+        const world = engine.world;
+
+        engine.gravity.y = 0;
+
+        const playerElement = document.getElementById('player');
+        const itemElement = document.getElementById('item');
+        const scoreDisplay = document.getElementById('score');
+        const timerDisplay = document.getElementById('timer');
+        const itemsPerSecondDisplay = document.getElementById('itemsPerSecond');
+        const endScreen = document.getElementById('endScreen');
+        const finalScoreDisplay = document.getElementById('finalScore');
+        const finalTimeDisplay = document.getElementById('finalTime');
+        const cooldownFill = document.getElementById('cooldownFill');
+
+        let score = 0;
+        let itemVisible = false;
+        let elapsedTime = 0;
+        let itemsCollected = 0;
+        let itemsPerSecond = 0;
+        let gameActive = true;
+
+        // Boost variables
+        let boostCooldown = 500; // 5 seconds cooldown
+        let canBoost = true;
+        let cooldownTimer = 0;
+
+        // Create a player body
+        const player = Bodies.rectangle(100, 100, 100, 80, {
+            frictionAir: 0.05,
+            inertia: Infinity
+        });
+
+        Composite.add(world, player);
+
+        // Create an item body
+        function spawnItem() {
+            const itemX = Math.random() * (window.innerWidth - 50);
+            const itemY = Math.random() * (window.innerHeight - 50);
+            itemElement.style.left = itemX + 'px';
+            itemElement.style.top = itemY + 'px';
+            itemElement.style.display = 'block';
+            itemVisible = true;
+
+            const item = Bodies.rectangle(itemX + 25, itemY + 25, 50, 50, {
+                isStatic: true,
+                isSensor: true
+            });
+
+            Composite.add(world, item);
+            return item;
+        }
+
+        let itemBody = spawnItem();
+
+        // Key tracking for continuous movement
+        const keys = {};
+
+        document.addEventListener('keydown', (event) => {
+            if (!gameActive) return; // Prevent movement when game is over
+			
+            if (event.key === ' ') {
+                applyBoost();
+			}
+
+            keys[event.key] = true; // Set movement key
+        });
+
+        document.addEventListener('keyup', (event) => {
+			// console.log(event.key)
+            keys[event.key.toLowerCase()] = false; // Reset movement key
+        });
+
+        // Apply boost to player
+        function applyBoost() {
+            if (!canBoost) return; // Exit if boosting is not allowed
+
+            canBoost = false;
+            cooldownTimer = boostCooldown;
+
+            // Get current velocity
+            const currentVelocity = player.velocity;
+
+            // Apply boost only if there is some movement
+            if (currentVelocity.x !== 0 || currentVelocity.y !== 0) {
+                const magnitude = Math.sqrt(currentVelocity.x ** 2 + currentVelocity.y ** 2);
+                if (magnitude > 0) {
+                    const unitVector = {
+                        x: currentVelocity.x / magnitude,
+                        y: currentVelocity.y / magnitude
+                    };
+
+                    const boostForceMagnitude = 0.5; // Adjust as needed for boost strength
+                    Matter.Body.applyForce(player, player.position, {
+                        x: unitVector.x * boostForceMagnitude,
+                        y: unitVector.y * boostForceMagnitude
+                    });
+                }
+            }
+        }
+
+        // Define a clamp function
+        function clamp(value, min, max) {
+            return Math.max(min, Math.min(max, value));
+        }
+
+        function updatePlayer() {
+            // Apply movement regardless of boost status
+            if (keys['w'] || keys['ArrowUp']) {
+                Matter.Body.applyForce(player, player.position, { x: 0, y: -0.01 });
+            }
+            if (keys['s'] || keys['ArrowDown']) {
+                Matter.Body.applyForce(player, player.position, { x: 0, y: 0.01 });
+            }
+            if (keys['a'] || keys['ArrowLeft']) {
+                Matter.Body.applyForce(player, player.position, { x: -0.01, y: 0 });
+            }
+            if (keys['d'] || keys['ArrowRight']) {
+                Matter.Body.applyForce(player, player.position, { x: 0.01, y: 0 });
+            }
+
+            // Clamp the player's position within the window bounds
+            const playerWidth = 100;
+            const playerHeight = 80;
+            const halfWidth = playerWidth / 2;
+            const halfHeight = playerHeight / 2;
+
+            player.position.x = clamp(player.position.x, halfWidth, window.innerWidth - halfWidth);
+            player.position.y = clamp(player.position.y, halfHeight, window.innerHeight - halfHeight);
+
+            playerElement.style.transform = `translate(${player.position.x}px, ${player.position.y}px)`;
+            checkCollision();
+        }
+
+        // Check for collision between player and item
+        function checkCollision() {
+            const playerRect = playerElement.getBoundingClientRect();
+            const itemRect = itemElement.getBoundingClientRect();
+
+            if (itemVisible && playerRect.left < itemRect.right &&
+                playerRect.right > itemRect.left &&
+                playerRect.top < itemRect.bottom &&
+                playerRect.bottom > itemRect.top) {
+                score++;
+                itemsCollected++;
+                scoreDisplay.textContent = 'Score: ' + score;
+                itemElement.style.display = 'none';
+                itemVisible = false;
+
+                Composite.remove(world, itemBody);
+                itemBody = spawnItem();
+
+                if (score >= 15) {
+                    endGame();
+                }
+            }
+        }
+
+        // Game loop
+        function gameLoop() {
+            if (gameActive) {
+                updatePlayer();
+                Engine.update(engine);
+                handleCooldown();
+            }
+            requestAnimationFrame(gameLoop); // Keep looping
+        }
+
+        // Timer and items per second update
+        function updateTimer() {
+            if (!gameActive) return;
+            elapsedTime += 1 / 60; // Increment based on frame rate
+            timerDisplay.textContent = 'Time: ' + parseFloat(Math.floor(elapsedTime * 10) / 10);
+
+            if (Math.floor(elapsedTime) > 0) {
+                itemsPerSecond = (itemsCollected / elapsedTime).toFixed(2);
+                itemsPerSecondDisplay.textContent = 'Items/Sec: ' + itemsPerSecond;
+            }
+
+            requestAnimationFrame(updateTimer);
+        }
+
+        // Handle cooldown for boosting
+        function handleCooldown() {
+            if (!canBoost) {
+                cooldownTimer -= 1000 / 60; // Decrease cooldown timer
+                if (cooldownTimer <= 0) {
+                    canBoost = true;
+                    cooldownFill.style.width = '100%'; // Reset cooldown bar
+                } else {
+                    cooldownFill.style.width = (cooldownTimer / boostCooldown * 100) + '%'; // Update cooldown bar
+                }
+            }
+        }
+
+        function endGame() {
+            gameActive = false;
+            itemElement.style.display = 'none';
+            finalScoreDisplay.textContent = 'Final Score: ' + score;
+            finalTimeDisplay.textContent = 'Time: ' + Math.floor(elapsedTime * 100000) / 100000 + ' seconds';
+            endScreen.style.display = 'block';
+        }
+
+        function restartGame() {
+            score = 0;
+            elapsedTime = 0;
+            itemsCollected = 0;
+            gameActive = true;
+            canBoost = true;
+            cooldownTimer = 0;
+            cooldownFill.style.width = '100%'; // Reset cooldown bar
+            scoreDisplay.textContent = 'Score: 0';
+            timerDisplay.textContent = 'Time: 0';
+            itemsPerSecondDisplay.textContent = 'Items/Sec: 0';
+            endScreen.style.display = 'none';
+            player.position = { x: 100, y: 100 };
+            playerElement.style.transform = `translate(${player.position.x}px, ${player.position.y}px)`;
+            Composite.clear(world);
+            Composite.add(world, player);
+            itemBody = spawnItem();
+            updateTimer();
+        }
+
+        gameLoop();
+        updateTimer();
+    </script>
+
+</body>
+
+</html>
