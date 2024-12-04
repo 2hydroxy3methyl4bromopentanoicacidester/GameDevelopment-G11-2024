@@ -22,12 +22,21 @@ headers = {
 
 response = requests.post(uri, data=soap_body, headers=headers)
 
+def Update(message, impl, args, oncomplete=None):
+    print(message)
+    t = threading.Thread(target=impl, args=args)
+    t.start()
+    val = t.join()
+    print(oncomplete or "Done " + str(message))
+    return val
+
+
 print(response.status_code)
 with open("output_users_SHAREPOINT.xml", "w") as write:
-    print("parsing")
-    dom = xml.dom.minidom.parseString(response.text)
-    print("parsed. prettifying")
-    pretty_xml_as_string = dom.toprettyxml()
+    #print("parsing")
+    dom = Update("Parsing", xml.dom.minidom.parseString, (response.text))
+    #print("parsed. prettifying")
+    pretty_xml_as_string = Update("Prettifying", dom.toprettyxml, ())
     print("formatted. writing to file.")
     write.write(pretty_xml_as_string)
     print("success.")
