@@ -39,12 +39,12 @@
         function repeatText() {
             const text = document.getElementById('repeatText').value;
             const count = parseInt(document.getElementById('repeatCount').value);
-            let result = '';
-            let i = 0;
-            while (i < count) {
-                result += text + ' ';
-                i++;
-            }
+            let result = (text + ' ').repeat(count);
+            //let i = 0;
+            //while (i < count) {
+            //    result += text + ' ';
+            //    i++;
+            //}
             document.getElementById('repeatOutput').innerText = result;
         }
 
