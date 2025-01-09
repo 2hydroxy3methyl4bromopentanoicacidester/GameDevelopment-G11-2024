@@ -1,0 +1,203 @@
+<!-- i moved your script tag because i refuse to learn good programming practices screw the DOM -->
+
+<body id="myBody" style="background-repeat:repeat; background-size: 80%" background="myBackground01.jpg" onkeydown="{
+    let myImg = document.getElementById('myImg01');
+    let left = parseInt(myImg.style.left);
+    let top = parseInt(myImg.style.top);
+    let width = parseInt(myImg.style.width);
+    let height = parseInt(myImg.style.height);
+    
+    if (event.key == 'a' && left > 0) {  // a = go left
+        myImg.style.left = left - 10 + 'px';
+    }
+    if (event.key == 'd' && left + width < window.innerWidth) {  // d = go right
+        myImg.style.left = left + 10 + 'px';
+    }
+
+    if (event.key == 'w' && top > 0) {  // w = go up
+        myImg.style.top = top - 10 + 'px';
+    }
+    if (event.key == 's' && top + height < window.innerHeight) {  // s = go down
+        myImg.style.top = top + 10 + 'px';
+    }
+
+    document.all.myText01.value = event.key;
+    console.log('input');
+}">
+ 
+<h1 align=center><font color=Yellow>T4A05 Template with WASD by Fred</font></h1>
+
+<input id="myText01" type=text value="" size=50 placeholder="Feedback here"><br>
+
+<input type=button value="Auto Background Left" onclick="{
+    clearInterval(myClock)
+    let myTemp = '100px 0px'
+    myClock = setInterval(function(){
+        myGlobalX -= 5
+        myTemp =  myGlobalX + 'px 0px'
+        document.getElementById('myBody').style.backgroundPosition = myTemp
+    }, 100)
+}">
+
+<input type=button value="Right" onTouchStart="{this.click(); event.preventDefault();}" onclick="{
+    document.getElementById('myImg01').style.left = parseInt(document.getElementById('myImg01').style.left) + 10 + 'px'
+    myCheckHit()     // checks for all collisions
+}">
+ 
+<input type=button value="Down" onTouchStart="{this.click(); event.preventDefault();}" onclick="{
+    document.getElementById('myImg01').style.top = parseInt(document.getElementById('myImg01').style.top) + 10 + 'px'
+    myCheckHit()     // checks for all collisions
+}"><br><br>
+
+<img id="myImg01" src="myImgNew.jpg"  style="position:absolute; width:100px; height:80px; left: 50px; top:190px;">
+<img id="myImg02" src="myImgNew.jpg"  style="position:absolute; width:100px; height:80px; left:350px; top:190px;">
+<img id="myImg03" src="myImgNew.jpg"  style="position:absolute; width:100px; height:80px; left:500px; top:190px;">
+<img id="myImg04" src="myImgNew.jpg"  style="position:absolute; width:100px; height:80px; left:500px; top:400px;">
+
+<script defer>
+    // helloooooooooooooooooooooo jeremy ellis
+    // look at all this template boilerplate!!!!!!
+    // nooooooo gpt cause im soooooo goood
+    // shut up torren
+
+
+    // global variables here
+    let myGlobalX = 0
+    let myClock
+    let myScore = 10
+
+    // global functions here
+    function myHitOther(my1,my2){
+        left1   = parseInt(document.getElementById(my1).style.left)
+        right1  = left1 + parseInt(document.getElementById(my1).style.width)
+        top1    = parseInt(document.getElementById(my1).style.top)   
+        bottom1 = top1   + parseInt(document.getElementById(my1).style.height)
+        left2   = parseInt(document.getElementById(my2).style.left)
+        right2  = left2 + parseInt(document.getElementById(my2).style.width)
+        top2    = parseInt(document.getElementById(my2).style.top)   
+        bottom2 = top2   + parseInt(document.getElementById(my2).style.height)
+        if ((right1  >=  left2  ) &&              
+            (bottom1 >=  top2   ) &&
+            (left1   <=  right2 ) &&
+            (top1    <=  bottom2) ){
+            return true
+        }
+    }
+
+    function myCheckHit(){
+        document.all.myText01.value = myScore  // show the present score
+
+        
+
+
+        // you LOSE refresh the page
+        if (myScore <= 0){
+            document.all.myText01.value = 'You Lose score at zero!'  
+            alert('Sorry you lose')
+            gameover();
+            return;
+        }
+
+        // YOU WIN and go to next level!
+        if ( myHitOther('myImg01','myImg04') ){
+            document.all.myText01.value = 'You hit myImg04 and you win the game!'  
+            alert('You Win, now go to the next level')
+            document.getElementById('myImg01').style.left = '20px'
+
+            incrementLevel()
+            location.reload()
+            return;
+            //location = 'https://www.google.ca'
+        }
+
+        boingboingimages.forEach(e=>{
+            if (myHitOther('myImg01', e)){
+                gameover();
+            }
+        })
+
+        // more if statements here
+    }
+
+    function gameover() {
+        document.getElementById('myImg01').style.left = '20px'
+        localStorage.setItem('level', 0);
+        document.all.myText01.value = `DEAD!! DEATH!!! YOURE DONE!!!`;
+        location.reload();
+    }
+
+    function incrementLevel() {
+        let currentLevel = localStorage.getItem('level');
+        if (currentLevel === null) {
+            currentLevel = 0;
+        } else {
+            currentLevel = parseInt(currentLevel);
+        }
+        currentLevel++;
+        localStorage.setItem('level', currentLevel);
+        document.all.myText01.value = `Level: ${currentLevel}`;
+    }
+
+    function getLevel() {
+        let currentLevel = localStorage.getItem('level');
+        if (currentLevel === null) {
+            return 0;
+        } else {
+            return parseInt(currentLevel);
+        }
+    }
+
+
+    function handleBounce(element) {
+        // stupid initializer thats very inefficient but we dont care because its javascript
+        if(!element.hasAttribute("directionX")){
+            element.setAttribute("directionX", 1)
+        }
+        if(!element.hasAttribute("directionY")){
+            element.setAttribute("directionY", 1)
+        }
+
+        let left = parseInt(element.style.left);
+        let top = parseInt(element.style.top);
+        if (left <= 0 || left + element.width >= window.innerWidth) {
+            element.setAttribute("directionX", element.getAttribute("directionX") * -1);  // WAAAAALL (invert velo)
+        }
+        if (top <= 0 || top + element.height >= window.innerHeight) {
+            element.setAttribute("directionY", element.getAttribute("directionY") * -1);
+        }
+        element.style.left = left + (element.getAttribute("directionX") * 5) + 'px';
+        element.style.top = top + (element.getAttribute("directionY") * 5) + 'px';
+    }
+
+    // yeah watch this awesome modularity im about to write under this line
+    let boingboingimages = [
+        "myImg02",
+        "myImg03"
+    ]
+
+    //spawn more dynamically (super cool) depending on level
+    var level = getLevel();
+    console.log(level) // lore
+    const randomoffset = 150; // px
+    const root = document.getElementById("myImg04");
+
+    for (let i = 0; i < level; i++) {
+        var enemy = root.cloneNode();
+        var name = `myEnemy${i}`;
+        enemy.setAttribute("id", name);
+        let randomLeftPosition = Math.floor(Math.random() * randomoffset) - (randomoffset / 2);
+        enemy.style.left = (parseInt(root.style.left) + randomLeftPosition) + 'px';
+        let randomTopPosition = Math.floor(Math.random() * randomoffset) - (randomoffset / 2);
+        enemy.style.top = (parseInt(root.style.top) + randomTopPosition) + 'px';
+        enemy.setAttribute("directionX", (Math.random() - 0.5) * 2)
+        enemy.setAttribute("directionY", (Math.random() - 0.5) * 2)
+        root.parentNode.appendChild(enemy);
+        boingboingimages.push(name);
+    }
+
+    // loops n whatnot
+    setInterval(function() {
+        boingboingimages.forEach(e => {handleBounce(document.getElementById(e))}); // one line lambda cause im just better (aka bad formatting)
+    }, 100);  // step every 100ms (inlined cause im soooo awesome)
+    setInterval(myCheckHit, 10); // continuous collision detection (haha i solved it before it happened)
+</script>
