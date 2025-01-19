@@ -1,0 +1,105 @@
+<html>
+  <body>
+    <h1>>Advanced Encryption Suite</h1>
+    <p><i>a20-spy</i></p>
+
+    <h2>>Input</h2>
+    <label for="inputText">Enter Text:</label><br>
+    <textarea id="inputText" placeholder="Enter text here..."></textarea><br><br>
+
+    <label for="key">Enter Key (for Caesar Cipher):</label><br>
+    <input type="number" id="key" placeholder="Enter a number (key)" /><br><br>
+
+    <!-- Encryption Buttons -->
+    <button onclick="encrypt()">Encrypt</button> -
+    <button onclick="decrypt()">Decrypt</button>
+
+    <h2>>Output</h2>
+    <div class="output">
+      <p><strong>Caesar Cipher:</strong> <span id="caesarOutput"></span></p>
+      <p><strong>Base64:</strong> <span id="base64Output"></span></p>
+      <p><strong>SHA-256:</strong> <span id="sha256Output"></span></p>
+      <p><strong>Hexadecimal:</strong> <span id="hexOutput"></span></p>
+    </div>
+
+    <script>
+      // Caesar Cipher
+      function caesarCipher(text, shift) {
+        let result = '';
+        for (let i = 0; i < text.length; i++) {
+          let char = text[i];
+          if (char.match(/[a-zA-Z]/)) {
+            let base = char >= 'a' ? 'a'.charCodeAt(0) : 'A'.charCodeAt(0);
+            result += String.fromCharCode((char.charCodeAt(0) - base + shift) % 26 + base);
+          } else {
+            result += char;
+          }
+        }
+        return result;
+      }
+
+      // ok so this isnt mine but im gunna keep it like this because its so funny. why dont you just invert the value in the body of the internal method????
+      function caesarDecipher(text, shift) { 
+        return caesarCipher(text, -shift);
+      }
+
+      // imma be honest i didnt wanna write most of this so thats why you have gpt wrapped methods
+      function base64Encode(text) {
+        return btoa(text);
+      }
+
+      function base64Decode(text) {
+        try {
+          return atob(text);
+        } catch (e) {
+          return 'Invalid Base64 string';
+        }
+      }
+
+      // i didnt write this :)
+      async function sha256(text) {
+        const encoder = new TextEncoder();
+        const data = encoder.encode(text);
+        const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+        return Array.from(new Uint8Array(hashBuffer))
+          .map(byte => byte.toString(16).padStart(2, '0'))
+          .join('');
+      }
+
+      // ggavedsegadsdgrfsdgfsgrd
+      function toHex(text) {
+        return Array.from(text)
+          .map(char => char.charCodeAt(0).toString(16).padStart(2, '0'))
+          .join('');
+      }
+
+      async function encrypt() {
+        const inputText = document.getElementById('inputText').value;
+        const key = parseInt(document.getElementById('key').value) || 0;
+
+        const caesarEncrypted = caesarCipher(inputText, key);
+        const base64Encrypted = base64Encode(inputText);
+        const sha256Hashed = await sha256(inputText);
+        const hexEncoded = toHex(inputText);
+
+        document.getElementById('caesarOutput').textContent = caesarEncrypted;
+        document.getElementById('base64Output').textContent = base64Encrypted;
+        document.getElementById('sha256Output').textContent = sha256Hashed;
+        document.getElementById('hexOutput').textContent = hexEncoded;
+      }
+
+      async function decrypt() {
+        const inputText = document.getElementById('inputText').value;
+        const key = parseInt(document.getElementById('key').value) || 0;
+
+        const caesarDecrypted = caesarDecipher(inputText, key);
+        const base64Decoded = base64Decode(inputText);
+
+        document.getElementById('caesarOutput').textContent = caesarDecrypted;
+        document.getElementById('base64Output').textContent = base64Decoded;
+        document.getElementById('sha256Output').textContent = 'N/A (one-way)';
+        document.getElementById('hexOutput').textContent = 'N/A (one-way)';
+      }
+    </script>
+  </body>
+</html>

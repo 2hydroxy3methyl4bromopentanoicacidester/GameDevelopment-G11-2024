@@ -1,0 +1,59 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="default.css">
+    </head>
+    <body>
+        <canvas id="myCanvas" width="800" height="600"></canvas>
+        <br><br>
+        <input type="button" value="Create Random Circles" class="buttons" onclick="makeRandomCircles()">
+        <input type="button" value="Generate Star" class="buttons" onclick="makeRandomStar()">
+        <input type="number" class="buttons small" placeholder="X" value="400" id="starX">
+        <input type="number" class="buttons small" placeholder="Y" value="300" id="starY">
+        <input type="number" class="buttons small" placeholder="Points" value="5" id="starPoints">
+        <br>
+
+        <script>
+            let myCanvas = document.getElementById('myCanvas');
+            let myContext = myCanvas.getContext('2d');
+
+            function makeRandomCircles() {
+                for (let i = 0; i < 50; i++) {
+                    let x = Math.random() * 800;
+                    let y = Math.random() * 600;
+                    let radius = Math.random() * 50;
+                    let color = `hsl(${Math.random() * 360}, 100%, 50%)`;
+
+                    myContext.beginPath();
+                    myContext.arc(x, y, radius, 0, Math.PI * 2);
+                    myContext.fillStyle = color;
+                    myContext.fill();
+                }
+            }
+
+            //if you think i was gunna write this myself you clearly dont know that i procrastinate anything math related
+            function makeRandomStar() {
+                let cx = parseInt(document.getElementById('starX').value);
+                let cy = parseInt(document.getElementById('starY').value);
+                let spikes = parseInt(document.getElementById('starPoints').value);
+                let outerRadius = Math.random() * 50 + 20;
+                let innerRadius = Math.random() * 20 + 10;
+                let rotation = Math.random() * Math.PI;
+
+                myContext.beginPath();
+                myContext.moveTo(cx + outerRadius * Math.cos(rotation), cy + outerRadius * Math.sin(rotation));
+
+                for (let i = 1; i <= spikes * 2; i++) {
+                    let angle = rotation + i * Math.PI / spikes;
+                    let radius = i % 2 === 0 ? outerRadius : innerRadius;
+
+                    myContext.lineTo(cx + radius * Math.cos(angle), cy + radius * Math.sin(angle));
+                }
+
+                myContext.closePath();
+                myContext.fillStyle = `hsl(${Math.random() * 360}, 100%, 50%)`;
+                myContext.fill();
+                myContext.stroke();
+            }
+        </script>
+    </body>
+</html>

@@ -1,0 +1,60 @@
+<html>
+  <body>
+    <h1>a18-extend-class</h1>
+
+    name: <input type="text" id="nameInput" value="Doritos"><br>
+    dry aged for (years): <input type="number" id="ageInput" value="5"><br>
+    type: <input type="text" id="typeInput" value="Corn Chip"><br>
+    <input type="button" value="Add Custom Chip" onclick="{
+      const name = document.getElementById('nameInput').value;
+      const age = document.getElementById('ageInput').value;
+      const type = document.getElementById('typeInput').value;
+      const chip = new Chip(name, age, type);
+      chip.describe();
+    }"><br><br>
+
+    <input type="button" value="Add Default Chip" onclick="{
+      const defaultChip = new Chip('Lays', 3, 'Potato Chip');
+      defaultChip.describe();
+    }"><br><br>
+
+    <input type="button" value="Add Premium Chip" onclick="{
+      const premiumChip = new PremiumChip('Pringles', 7, 'Stackable Chip');
+      premiumChip.describe();
+    }"><br>
+
+    <div id="outputContainer"></div>
+
+    <script>
+      class Snack {
+        constructor(name, age) {
+          this.name = name;
+          this.age = age;
+        }
+        describe() {
+          document.getElementById('outputContainer').innerHTML += `${this.name} has been dry aging in the finest facilities for ${this.age} years.<br>`;
+        }
+      }
+
+      class Chip extends Snack {
+        constructor(name, age, type) {
+          super(name, age);
+          this.type = type;
+        }
+        describe() {
+          document.getElementById('outputContainer').innerHTML += `${this.name} is a ${this.age}-year-aged ${this.type}.<br>`;
+        }
+      }
+
+      class PremiumChip extends Chip {
+        constructor(name, age, specialty) {
+          super(name, age, 'Premium Chip');
+          this.specialty = specialty;
+        }
+        describe() {
+          document.getElementById('outputContainer').innerHTML += `${this.name} is a ${this.age}-year-aged premium ${this.specialty}.<br>`;
+        }
+      }
+    </script>
+  </body>
+</html>

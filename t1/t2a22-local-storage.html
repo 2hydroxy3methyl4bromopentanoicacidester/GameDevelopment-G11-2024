@@ -1,0 +1,70 @@
+<html>
+  <head></head>
+  <body>
+    <h1>file saver that saves things on your file system and is useless lol</h1>
+    <p>enter your deepest darkest desires (or dont):</p>
+    <textarea id="dataInput" placeholder="Lorem ipsum dolor sit amet consectetur adipisicing elit. Debitis, laboriosam deleniti repellendus porro facilis tempora quam amet quas accusamus, aliquid corporis autem minima sunt velit distinctio nemo eaque? Minima, explicabo?" style="width: 100%; height: 100px;"></textarea>
+    <br><br>
+    <input type="file" id="fileInput" multiple>
+    <br><br>
+    <button onclick="saveData()">save</button>
+    <button onclick="loadData()">load</button>
+    <button onclick="clearData()">clear</button>
+    <p id="output"></p>
+
+    <script>
+      const dataKey = "localData";
+
+      document.getElementById("fileInput").addEventListener("change", (event) => {
+        const files = event.target.files;
+        const fileReaders = [];
+        Array.from(files).forEach((file, index) => {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            saveToLocalStorage(file.name, e.target.result);
+            if (index === files.length - 1) {
+              document.getElementById("output").innerText = "Files saved.";
+            }
+          };
+          reader.readAsDataURL(file);
+        });
+      });
+
+      function saveToLocalStorage(key, value) {
+        const existingData = JSON.parse(localStorage.getItem(dataKey)) || {};
+        existingData[key] = value;
+        localStorage.setItem(dataKey, JSON.stringify(existingData));
+      }
+
+      function saveData() {
+        const textData = document.getElementById("dataInput").value;
+        if (textData.trim()) {
+          saveToLocalStorage("pastedText", textData);
+          document.getElementById("output").innerText = "Text saved.";
+        }
+      }
+
+      function loadData() {
+        const storedData = JSON.parse(localStorage.getItem(dataKey));
+        if (storedData) {
+          let display = "Stored Items:\n";
+          for (const key in storedData) {
+            if (storedData[key].startsWith("data:")) {
+              display += `=FILE=====\nFile: ${key}\n-> Data:\n${atob(storedData[key].split(",")[1])}\n==========`;
+            } else {
+              display += `Text: ${storedData[key]}\n`;
+            }
+          }
+          document.getElementById("output").innerText = display;
+        } else {
+          document.getElementById("output").innerText = "No data found.";
+        }
+      }
+
+      function clearData() {
+        localStorage.removeItem(dataKey);
+        document.getElementById("output").innerText = "Data cleared.";
+      }
+    </script>
+  </body>
+</html>

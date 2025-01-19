@@ -1,0 +1,181 @@
+<html xmlns:v="urn:schemas-microsoft-com:vml">
+<b>the fog is coming</b>
+
+<br>
+
+<script>
+document.name="myDoc"
+window.name="poop"
+document.cookie = "idontknowbro=ujuihhiuhiiujuhiok\0"
+
+var splitIndex = 0;
+var splitArray = new Array();
+
+function splits(string,text) {
+    var strLength = string.length, txtLength = text.length;
+    if ((strLength == 0) || (txtLength == 0)) return;
+
+    var i = string.indexOf(text);
+    if ((!i) && (text != string.substring(0,txtLength))) return;
+    if (i == -1) {
+        splitArray[splitIndex++] = string;
+        return;
+    }
+
+    splitArray[splitIndex++] = string.substring(0,i);
+
+    if (i+txtLength < strLength)
+        splits(string.substring(i+txtLength,strLength),text);
+
+    return;
+}
+
+function split(string,text) {
+    splitIndex = 0;
+    splits(string,text);
+}
+
+function join(arrayName) {
+    var temp = '';
+    for (var i=0; i<splitIndex; i++)
+        temp += arrayName[i] + '\n';
+    if (escape(temp.substring(0,1)) == '%0A')
+        return temp.substring(1,temp.length);
+    else
+        return temp;
+}
+
+function sort(arrayName) {
+    for (var i=0; i<(splitIndex-1); i++)
+        for (var j=i+1; j<splitIndex; j++)
+            if (arrayName[j] < arrayName[i]) {
+                var dummy = arrayName[i];
+                arrayName[i] = arrayName[j];
+                arrayName[j] = dummy;
+            }
+}
+
+function sorttext() {
+    split(document.myForm.myTextarea.value,'\n');
+    sort(splitArray);
+    document.myForm.myTextarea.value = join(splitArray);
+}
+</script>
+
+<script language="JavaScript1.1">
+function split(string,text) {
+    splitArray = string.split(text);
+    splitIndex = splitArray.length;
+}
+
+function myObjectData(myObject){
+    window.status = 'Please Wait'
+    document.myForm.myText1.value = ''
+    document.myForm.myTextarea.value = ''
+    myLoop = 0
+    for (var prop in myObject){
+        myLoop+=1
+        document.myForm.myTextarea.value+=myObject.name+'.'+prop+'='+myObject[prop]+ '\n'
+        if (myLoop % 3 == 1){
+            window.status += '.'}   
+    }
+    document.myForm.myText1.value =this.parent.name + '.'+myObject.name
+    window.status += 'Loaded '  
+    sorttext() 
+    window.status += 'Sorted.'  
+}
+
+document.counter=0 
+function moreAnimations(){
+  document.counter+=1
+  document.all.myPic1.style.pixelLeft+=3
+  document.all.myPic1.style.pixelTop+=2
+  if ((document.counter>10) && (document.counter<20)){
+      document.all.myPic1.style.height=parseInt(document.all.myPic1.style.height)+12
+  }
+}
+</script>
+
+<h3>ihfuauihofiauhsdfasihjgyuksafygufasykykykykykykykykykykykykykykykykykykykykyyyyy</h3>
+clickt he buttons i dont remember what half of them do and i think i stole a lot of them
+
+<br><br>
+
+<img id="moveCar" style="position:absolute;left:500px;top:300px" src="randomcar.png" width="400" height="200">
+
+<form name="myForm2">
+  <textarea id="smellyTextArea" name="myTextarea" style="height: 16px; width: 498px;">hello world</textarea>
+  <input type="text" name="myText1" id="myText2" size="50" value=""><br>
+</form>
+
+<audio id="smellySound" src="randomtune.mp3"></audio>
+
+<h3>do it. click them. you know you want to</h3>
+<form name="myForm">
+  <input type="text" name="myText1" size="50" value=""><br>
+  
+  <input type="button" value="1 window" onclick="{myObjectData(window)}">
+  <input type="button" value="2 document" onclick="{myObjectData(document)}">
+  <input type="button" value="3 document.myForm2" onclick="{myObjectData(document.myForm2)}">
+  <input type="button" value="4 document.myForm2.myTextarea" onclick="{myObjectData(document.myForm2.myTextarea)}">
+  <input type="button" value="5 window.location" onclick="{myObjectData(window.location)}">
+  <input type="button" value="6 window.parent" onclick="{myObjectData(window.parent)}">
+  <input type="button" value="7 window.chrome" onclick="{myObjectData(window.chrome)}">
+  <input type="button" value="8 document.all.moveCar.style" onclick="{myObjectData(document.all.moveCar.style)}">
+  <input type="button" value="9 style" onclick="{myObjectData(style)}">
+  <input type="button" value="10 document.all.moveCar" onclick="{myObjectData(document.all.moveCar)}">
+  <input type="button" value="11 window.localStorage" onclick="{myObjectData(window.localStorage)}">
+  <input type="button" value="12 document.getElementById(&#39;moveCar&#39;).style" onclick="{myObjectData(document.getElementById(&#39;moveCar&#39;).style)}">
+  <input type="button" id="moveCarBtn" value="13 document.myForm2.myText1" onclick="{myObjectData(document.myForm2.myText1)}">
+  <input type="button" value="14 document.getElementById(&#39;myText2&#39;)" onclick="{myObjectData(document.getElementById(&#39;myText2&#39;))}">
+  <input type="button" value="15 get data about car image" onclick="{myObjectData(document.all.moveCar)}">
+  <input type="button" id="moveCarBtn" value="16 make the car move right" onclick="{carMove(); myObjectData(document.all.moveCarBtn);}">
+  <input type="button" value="17 display system date and time" onclick="{timeData()}">
+  <input type="button" value="18 get data top input box" onclick="{myObjectData(document.all.smellyTextArea)}">
+  <input type="button" value="19 play music and grab data" onclick="{myObjectData(document.all.smellySound); musicPlay();}">
+  <input type="button" value="20 window.chrome" onclick="{myObjectData(window.chrome)}">
+  <br>
+
+<script>
+let element = document.getElementById("moveCar");
+let positionX = parseInt(element.style.left) || 0;
+let positionY = 0;
+let speedX = 3;
+let myClock;
+
+function musicPlay() {
+    let audio = document.getElementById("smellySound");
+    audio.play();
+}
+
+function carMove() {
+    clearInterval(myClock);
+
+    myClock = setInterval(() => {
+        positionX += speedX;
+
+        element.style.position = "absolute";
+        element.style.left = `${positionX}px`;
+    }, 20);
+}
+
+function timeData() {
+    let now = new Date();
+    let year = now.getFullYear();
+    let month = String(now.getMonth() + 1);
+    let day = String(now.getDate());
+    let hours = String(now.getHours());
+    let minutes = String(now.getMinutes());
+    let seconds = String(now.getSeconds());
+
+    let time = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+    console.log(time);
+    document.getElementById("smellyTextArea").value = time;
+}
+</script>
+
+<textarea id="smellyTextArea" name="myTextarea" rows="20" cols="70" wrap=""></textarea>
+</form>
+
+</body>
+</html>

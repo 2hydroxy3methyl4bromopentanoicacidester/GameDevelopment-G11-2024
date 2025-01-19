@@ -1,0 +1,51 @@
+<html>
+  <head>
+    <style>
+      .controller {
+        margin: 10px;
+      }
+
+      img {
+        position: relative;
+        width: 100px;
+        height: 100px;
+        top: 0px;
+        left: 0px;
+        transition: .25s ease;
+      }
+    </style>
+    <link rel="stylesheet" href="default.css">
+  </head>
+  <body>
+    <h1>a17-move (politics edition)</h1>
+    <div class="controller">
+      <input type="button" value="Move Left" onclick="moveImage('myImage01', [-50, 0])">
+      <input type="button" value="Move Right" onclick="moveImage('myImage01', [50, 0])">
+      <input type="button" value="Move Up" onclick="moveImage('myImage01', [0, -50])">
+      <input type="button" value="Move Down" onclick="moveImage('myImage01', [0, 50])">
+    </div>
+    <div class="controller">
+      <input type="button" value="Move Left (2)" onclick="moveImage('myImage02', [-50, 0])">
+      <input type="button" value="Move Right (2)" onclick="moveImage('myImage02', [50, 0])">
+      <input type="button" value="Move Up (2)" onclick="moveImage('myImage02', [0, -50])">
+      <input type="button" value="Move Down (2)" onclick="moveImage('myImage02', [0, 50])">
+    </div>
+    <br>
+    <div class="controller">
+      <input type="button" value="Diagonal Top-Left" onclick="moveImage('myImage01', [-50, -50])">
+      <input type="button" value="Diagonal Bottom-Right" onclick="moveImage('myImage02', [50, 50])">
+    </div>
+    <img id="myImage01" src="https://media.newyorker.com/photos/65c1341896a3664d2e864e97/master/pass/Fry-Trump-Emails.jpg">
+    <img id="myImage02" src="https://api.time.com/wp-content/uploads/2024/06/president-joe-biden-2024-006.jpg">
+
+    <script>
+      function moveImage(imageId, vector) {
+        const image = document.getElementById(imageId);
+        const currentLeft = parseInt(image.style.left || 0, 10);
+        const currentTop = parseInt(image.style.top || 0, 10);
+        image.style.left = currentLeft + vector[0] + 'px';
+        image.style.top = currentTop + vector[1] + 'px';
+      }
+    </script>
+  </body>
+</html>
